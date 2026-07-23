@@ -197,7 +197,7 @@ export function useAppStoreLogic(): AppState {
     } catch (err: any) {
       console.warn('Google sign-in popup notice / fallback triggered:', err?.message);
       // Seamless fallback for iframe / popup restrictions
-      login('googleuser@gmail.com', 'Alex Morgan', 'google', 'Home Lead');
+      login('user@lina.ai', 'Family Account', 'google', 'Home Lead');
     }
   };
 
