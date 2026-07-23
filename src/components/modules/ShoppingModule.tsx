@@ -4,7 +4,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { api } from '../../lib/api';
 
 export const ShoppingModule: React.FC = () => {
-  const { shopping, refreshAllModules, sendMessage, setActiveModule } = useAppStore();
+  const { user, shopping, refreshAllModules, sendMessage, setActiveModule } = useAppStore();
   const [newItemName, setNewItemName] = useState('');
   const [newCategory, setNewCategory] = useState('Produce');
   const [newQuantity, setNewQuantity] = useState(1);
@@ -19,7 +19,7 @@ export const ShoppingModule: React.FC = () => {
       name: newItemName.trim(),
       category: newCategory,
       quantity: Number(newQuantity) || 1,
-      addedBy: 'User',
+      addedBy: user?.name || 'User',
     });
     setNewItemName('');
     await refreshAllModules();
@@ -109,44 +109,50 @@ export const ShoppingModule: React.FC = () => {
 
       {/* Items List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {filteredItems.map((item) => (
-          <div
-            key={item.id}
-            className={`p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
-              item.isChecked
-                ? 'bg-slate-950/40 border-slate-900 text-slate-500 line-through'
-                : 'bg-slate-900/60 border-slate-800 text-slate-200 hover:border-slate-700'
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => handleToggle(item.id, !item.isChecked)}
-                className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${
-                  item.isChecked
-                    ? 'bg-emerald-500 border-emerald-500 text-white'
-                    : 'border-slate-700 hover:border-violet-500'
-                }`}
-              >
-                {item.isChecked && <Check className="w-4 h-4" />}
-              </button>
-              <div>
-                <div className="font-semibold text-sm">{item.name}</div>
-                <div className="text-[11px] text-slate-400 flex items-center gap-2">
-                  <span className="px-2 py-0.2 rounded bg-slate-800 text-violet-300 font-bold">{item.category}</span>
-                  <span>Qty: {item.quantity} {item.unit || ''}</span>
-                  <span>• Added by {item.addedBy}</span>
+        {filteredItems.length === 0 ? (
+          <div className="col-span-full p-8 text-center text-xs text-slate-400 bg-slate-900/40 rounded-3xl border border-slate-800">
+            No items in your shopping list yet. Add groceries using the form above or ask Lina AI in chat!
+          </div>
+        ) : (
+          filteredItems.map((item) => (
+            <div
+              key={item.id}
+              className={`p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                item.isChecked
+                  ? 'bg-slate-950/40 border-slate-900 text-slate-500 line-through'
+                  : 'bg-slate-900/60 border-slate-800 text-slate-200 hover:border-slate-700'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => handleToggle(item.id, !item.isChecked)}
+                  className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${
+                    item.isChecked
+                      ? 'bg-emerald-500 border-emerald-500 text-white'
+                      : 'border-slate-700 hover:border-violet-500'
+                  }`}
+                >
+                  {item.isChecked && <Check className="w-4 h-4" />}
+                </button>
+                <div>
+                  <div className="font-semibold text-sm">{item.name}</div>
+                  <div className="text-[11px] text-slate-400 flex items-center gap-2">
+                    <span className="px-2 py-0.2 rounded bg-slate-800 text-violet-300 font-bold">{item.category}</span>
+                    <span>Qty: {item.quantity} {item.unit || ''}</span>
+                    <span>• Added by {item.addedBy}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button
-              onClick={() => handleDelete(item.id)}
-              className="p-2 text-slate-500 hover:text-red-400 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-        ))}
+              <button
+                onClick={() => handleDelete(item.id)}
+                className="p-2 text-slate-500 hover:text-red-400 transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

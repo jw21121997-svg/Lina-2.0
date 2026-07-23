@@ -5,7 +5,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { api } from '../../lib/api';
 
 export const ChoresModule: React.FC = () => {
-  const { chores, familyMembers, refreshAllModules } = useAppStore();
+  const { user, chores, familyMembers, refreshAllModules } = useAppStore();
   const [title, setTitle] = useState('');
   const [assignedTo, setAssignedTo] = useState('Liam');
   const [points, setPoints] = useState(20);
@@ -70,22 +70,29 @@ export const ChoresModule: React.FC = () => {
 
       {/* Points Ledger Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {familyMembers.map((member) => (
-          <div
-            key={member.id}
-            className="p-5 rounded-3xl bg-slate-900/60 border border-slate-800 flex items-center justify-between"
-          >
-            <div className="flex items-center gap-3">
-              <div className="text-2xl">{member.avatar}</div>
-              <div>
-                <div className="font-bold text-sm text-white">{member.name}</div>
-                <div className="text-xs text-amber-400 font-extrabold flex items-center gap-1">
-                  <Flame className="w-3.5 h-3.5 fill-amber-400" /> {member.pointsBalance} PTS
+        {familyMembers.length === 0 ? (
+          <div className="col-span-full p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+            <span>No family members created yet.</span>
+            <span className="text-amber-400 font-bold">{user?.name || 'Home Lead'}: 0 PTS</span>
+          </div>
+        ) : (
+          familyMembers.map((member) => (
+            <div
+              key={member.id}
+              className="p-5 rounded-3xl bg-slate-900/60 border border-slate-800 flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">{member.avatar || '👤'}</div>
+                <div>
+                  <div className="font-bold text-sm text-white">{member.name}</div>
+                  <div className="text-xs text-amber-400 font-extrabold flex items-center gap-1">
+                    <Flame className="w-3.5 h-3.5 fill-amber-400" /> {member.pointsBalance || 0} PTS
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/* Add Chore Form */}
@@ -128,40 +135,46 @@ export const ChoresModule: React.FC = () => {
       <div className="space-y-3">
         <h3 className="text-sm font-bold text-slate-300">Family Chore Matrix</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {chores.map((chore) => (
-            <div
-              key={chore.id}
-              className={`p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
-                chore.isCompleted
-                  ? 'bg-slate-950/40 border-slate-900 text-slate-500 line-through'
-                  : 'bg-slate-900/60 border-slate-800 text-slate-200'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => handleToggleChore(chore.id, !chore.isCompleted)}
-                  className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${
-                    chore.isCompleted ? 'bg-amber-500 border-amber-500 text-white' : 'border-slate-700 hover:border-amber-500'
-                  }`}
-                >
-                  {chore.isCompleted && <Check className="w-4 h-4" />}
-                </button>
-                <div>
-                  <div className="font-bold text-sm">{chore.title}</div>
-                  <div className="text-[11px] text-slate-400 flex items-center gap-2">
-                    <span className="text-amber-400 font-extrabold">+{chore.points} PTS</span>
-                    <span>• Assigned to {chore.assignedTo}</span>
+          {chores.length === 0 ? (
+            <div className="col-span-full p-8 text-center text-xs text-slate-400 bg-slate-900/40 rounded-3xl border border-slate-800">
+              No chores assigned yet. Use the form above to assign household chores and reward points.
+            </div>
+          ) : (
+            chores.map((chore) => (
+              <div
+                key={chore.id}
+                className={`p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                  chore.isCompleted
+                    ? 'bg-slate-950/40 border-slate-900 text-slate-500 line-through'
+                    : 'bg-slate-900/60 border-slate-800 text-slate-200'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleToggleChore(chore.id, !chore.isCompleted)}
+                    className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${
+                      chore.isCompleted ? 'bg-amber-500 border-amber-500 text-white' : 'border-slate-700 hover:border-amber-500'
+                    }`}
+                  >
+                    {chore.isCompleted && <Check className="w-4 h-4" />}
+                  </button>
+                  <div>
+                    <div className="font-bold text-sm">{chore.title}</div>
+                    <div className="text-[11px] text-slate-400 flex items-center gap-2">
+                      <span className="text-amber-400 font-extrabold">+{chore.points} PTS</span>
+                      <span>• Assigned to {chore.assignedTo}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {chore.isCompleted && (
-                <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">
-                  Completed 🎉
-                </span>
-              )}
-            </div>
-          ))}
+                {chore.isCompleted && (
+                  <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">
+                    Completed 🎉
+                  </span>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -188,19 +201,16 @@ export const ChoresModule: React.FC = () => {
 
               <div className="pt-2 border-t border-slate-800/80 space-y-2">
                 <div className="text-xs font-black text-amber-400">{rw.pointsCost} Points</div>
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => handleRedeemReward(rw.id, 'Liam')}
-                    className="flex-1 py-1.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/40 text-amber-300 text-[11px] font-bold transition-all"
-                  >
-                    Redeem (Liam)
-                  </button>
-                  <button
-                    onClick={() => handleRedeemReward(rw.id, 'Emma')}
-                    className="flex-1 py-1.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/40 text-amber-300 text-[11px] font-bold transition-all"
-                  >
-                    Redeem (Emma)
-                  </button>
+                <div className="flex flex-wrap gap-1">
+                  {(familyMembers.length > 0 ? familyMembers : [{ id: 'curr', name: user?.name || 'Home Lead' }]).map((m) => (
+                    <button
+                      key={m.id}
+                      onClick={() => handleRedeemReward(rw.id, m.name)}
+                      className="flex-1 py-1.5 px-2 rounded-xl bg-amber-600/20 hover:bg-amber-600/40 text-amber-300 text-[11px] font-bold transition-all whitespace-nowrap"
+                    >
+                      Redeem ({m.name.split(' ')[0]})
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>

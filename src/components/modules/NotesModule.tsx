@@ -121,42 +121,48 @@ export const NotesModule: React.FC = () => {
       </form>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {filteredNotes.map((n) => (
-          <div
-            key={n.id}
-            className={`p-5 rounded-3xl border transition-all flex flex-col justify-between space-y-3 ${
-              n.isPinned ? 'bg-violet-950/20 border-violet-500/40' : 'bg-slate-900/60 border-slate-800'
-            }`}
-          >
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-slate-800 text-violet-300 font-bold text-[10px] uppercase">
-                  {n.category}
-                </span>
-                {n.isPinned && <Pin className="w-3.5 h-3.5 text-violet-400 fill-violet-400" />}
-              </div>
-              <div className="font-bold text-base text-white">{n.title}</div>
-              <p className="text-xs text-slate-300 whitespace-pre-wrap mt-2">{n.content}</p>
-            </div>
-
-            <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Updated {n.updatedAt}</span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleExportToDrive(n)}
-                  title="Export Note to Google Drive"
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition-colors flex items-center gap-1"
-                >
-                  <HardDrive className="w-3.5 h-3.5" />
-                  <span className="text-[10px]">Drive</span>
-                </button>
-                <button onClick={() => handleDelete(n.id)} className="p-1.5 text-slate-500 hover:text-red-400">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
+        {filteredNotes.length === 0 ? (
+          <div className="col-span-full p-8 text-center text-xs text-slate-400 bg-slate-900/40 rounded-3xl border border-slate-800">
+            No notes found. Create your first note above to build your family knowledge base.
           </div>
-        ))}
+        ) : (
+          filteredNotes.map((n) => (
+            <div
+              key={n.id}
+              className={`p-5 rounded-3xl border transition-all flex flex-col justify-between space-y-3 ${
+                n.isPinned ? 'bg-violet-950/20 border-violet-500/40' : 'bg-slate-900/60 border-slate-800'
+              }`}
+            >
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-slate-800 text-violet-300 font-bold text-[10px] uppercase">
+                    {n.category}
+                  </span>
+                  {n.isPinned && <Pin className="w-3.5 h-3.5 text-violet-400 fill-violet-400" />}
+                </div>
+                <div className="font-bold text-base text-white">{n.title}</div>
+                <p className="text-xs text-slate-300 whitespace-pre-wrap mt-2">{n.content}</p>
+              </div>
+
+              <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Updated {n.updatedAt}</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleExportToDrive(n)}
+                    title="Export Note to Google Drive"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition-colors flex items-center gap-1"
+                  >
+                    <HardDrive className="w-3.5 h-3.5" />
+                    <span className="text-[10px]">Drive</span>
+                  </button>
+                  <button onClick={() => handleDelete(n.id)} className="p-1.5 text-slate-500 hover:text-red-400">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

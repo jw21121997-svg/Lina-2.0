@@ -4,7 +4,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { api } from '../../lib/api';
 
 export const BudgetModule: React.FC = () => {
-  const { budget, refreshAllModules, sendMessage, setActiveModule } = useAppStore();
+  const { user, budget, refreshAllModules, sendMessage, setActiveModule } = useAppStore();
   const [type, setType] = useState<'expense' | 'income'>('expense');
   const [category, setCategory] = useState('Groceries');
   const [amount, setAmount] = useState('');
@@ -22,7 +22,7 @@ export const BudgetModule: React.FC = () => {
       category,
       amount: Number(amount),
       description,
-      paidBy: 'Sarah',
+      paidBy: user?.name || 'Home Lead',
     });
     setAmount('');
     setDescription('');
@@ -143,36 +143,42 @@ export const BudgetModule: React.FC = () => {
       <div className="space-y-3">
         <h3 className="text-sm font-bold text-slate-300">Transaction History</h3>
         <div className="space-y-2">
-          {budget.map((b) => (
-            <div
-              key={b.id}
-              className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 flex items-center justify-between text-xs"
-            >
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl ${b.type === 'income' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
-                  {b.type === 'income' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-                </div>
-                <div>
-                  <div className="font-bold text-white">{b.description || b.category}</div>
-                  <div className="text-[11px] text-slate-400">
-                    {b.category} • {b.date} • Paid by {b.paidBy}
+          {budget.length === 0 ? (
+            <div className="p-8 text-center text-xs text-slate-400 bg-slate-900/40 rounded-3xl border border-slate-800">
+              No transactions recorded yet. Log an income or expense above to start tracking your family budget.
+            </div>
+          ) : (
+            budget.map((b) => (
+              <div
+                key={b.id}
+                className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 flex items-center justify-between text-xs"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-xl ${b.type === 'income' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+                    {b.type === 'income' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+                  </div>
+                  <div>
+                    <div className="font-bold text-white">{b.description || b.category}</div>
+                    <div className="text-[11px] text-slate-400">
+                      {b.category} • {b.date} • Paid by {b.paidBy}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex items-center gap-4">
-                <span className={`text-sm font-bold ${b.type === 'income' ? 'text-emerald-400' : 'text-slate-200'}`}>
-                  {b.type === 'income' ? '+' : '-'}${b.amount.toFixed(2)}
-                </span>
-                <button
-                  onClick={() => handleDelete(b.id)}
-                  className="p-1 text-slate-500 hover:text-red-400"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-4">
+                  <span className={`text-sm font-bold ${b.type === 'income' ? 'text-emerald-400' : 'text-slate-200'}`}>
+                    {b.type === 'income' ? '+' : '-'}${b.amount.toFixed(2)}
+                  </span>
+                  <button
+                    onClick={() => handleDelete(b.id)}
+                    className="p-1 text-slate-500 hover:text-red-400"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

@@ -69,42 +69,48 @@ export const RemindersModule: React.FC = () => {
       </form>
 
       <div className="space-y-3">
-        {reminders.map((rem) => (
-          <div
-            key={rem.id}
-            className={`p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
-              rem.isCompleted
-                ? 'bg-slate-950/40 border-slate-900 text-slate-500 line-through'
-                : 'bg-slate-900/60 border-slate-800 text-slate-200'
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => handleToggle(rem.id, !rem.isCompleted)}
-                className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${
-                  rem.isCompleted ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-700 hover:border-violet-500'
-                }`}
-              >
-                {rem.isCompleted && <Check className="w-4 h-4" />}
-              </button>
-              <div>
-                <div className="font-semibold text-sm">{rem.title}</div>
-                <div className="text-[11px] text-slate-400 flex items-center gap-2">
-                  <span className={`px-2 py-0.2 rounded font-bold uppercase text-[10px] ${
-                    rem.priority === 'high' ? 'bg-rose-500/20 text-rose-300' : 'bg-slate-800 text-slate-400'
-                  }`}>
-                    {rem.priority} Priority
-                  </span>
-                  <span>Due: {rem.dueDate}</span>
+        {reminders.length === 0 ? (
+          <div className="p-8 text-center text-xs text-slate-400 bg-slate-900/40 rounded-3xl border border-slate-800">
+            No active reminders set. Add household reminders above or set them via voice commands with Lina.
+          </div>
+        ) : (
+          reminders.map((rem) => (
+            <div
+              key={rem.id}
+              className={`p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                rem.isCompleted
+                  ? 'bg-slate-950/40 border-slate-900 text-slate-500 line-through'
+                  : 'bg-slate-900/60 border-slate-800 text-slate-200'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => handleToggle(rem.id, !rem.isCompleted)}
+                  className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${
+                    rem.isCompleted ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-700 hover:border-violet-500'
+                  }`}
+                >
+                  {rem.isCompleted && <Check className="w-4 h-4" />}
+                </button>
+                <div>
+                  <div className="font-semibold text-sm">{rem.title}</div>
+                  <div className="text-[11px] text-slate-400 flex items-center gap-2">
+                    <span className={`px-2 py-0.2 rounded font-bold uppercase text-[10px] ${
+                      rem.priority === 'high' ? 'bg-rose-500/20 text-rose-300' : 'bg-slate-800 text-slate-400'
+                    }`}>
+                      {rem.priority} Priority
+                    </span>
+                    <span>Due: {rem.dueDate}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button onClick={() => handleDelete(rem.id)} className="p-2 text-slate-500 hover:text-red-400">
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-        ))}
+              <button onClick={() => handleDelete(rem.id)} className="p-2 text-slate-500 hover:text-red-400">
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

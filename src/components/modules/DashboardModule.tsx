@@ -160,22 +160,28 @@ export const DashboardModule: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            {calendar.slice(0, 4).map((ev) => (
-              <div
-                key={ev.id}
-                className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between text-xs"
-              >
-                <div>
-                  <div className="font-semibold text-slate-100">{ev.title}</div>
-                  <div className="text-slate-400 text-[11px]">
-                    {ev.date} {ev.time ? `@ ${ev.time}` : ''} • {ev.location}
-                  </div>
-                </div>
-                <span className="px-2.5 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 font-semibold uppercase text-[10px]">
-                  {ev.category}
-                </span>
+            {calendar.length === 0 ? (
+              <div className="p-6 text-center text-xs text-slate-400 bg-slate-950/40 rounded-2xl border border-slate-800/80">
+                No upcoming events recorded yet. Click <span className="text-violet-400 font-semibold cursor-pointer" onClick={() => setActiveModule('calendar')}>Open Agenda</span> to add events.
               </div>
-            ))}
+            ) : (
+              calendar.slice(0, 4).map((ev) => (
+                <div
+                  key={ev.id}
+                  className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between text-xs"
+                >
+                  <div>
+                    <div className="font-semibold text-slate-100">{ev.title}</div>
+                    <div className="text-slate-400 text-[11px]">
+                      {ev.date} {ev.time ? `@ ${ev.time}` : ''} • {ev.location}
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 font-semibold uppercase text-[10px]">
+                    {ev.category}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -197,22 +203,28 @@ export const DashboardModule: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            {lowPantry.map((item) => (
-              <div
-                key={item.id}
-                className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between text-xs"
-              >
-                <div>
-                  <div className="font-semibold text-slate-100">{item.name}</div>
-                  <div className="text-amber-400 text-[11px]">
-                    Qty: {item.quantity} {item.unit} (Threshold: {item.minThreshold})
-                  </div>
-                </div>
-                <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 font-semibold text-[10px]">
-                  Low Stock
-                </span>
+            {lowPantry.length === 0 ? (
+              <div className="p-6 text-center text-xs text-slate-400 bg-slate-950/40 rounded-2xl border border-slate-800/80">
+                Pantry inventory is well-stocked! Click <span className="text-emerald-400 font-semibold cursor-pointer" onClick={() => setActiveModule('pantry')}>Pantry</span> to manage items.
               </div>
-            ))}
+            ) : (
+              lowPantry.map((item) => (
+                <div
+                  key={item.id}
+                  className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between text-xs"
+                >
+                  <div>
+                    <div className="font-semibold text-slate-100">{item.name}</div>
+                    <div className="text-amber-400 text-[11px]">
+                      Qty: {item.quantity} {item.unit} (Threshold: {item.minThreshold})
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 font-semibold text-[10px]">
+                    Low Stock
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

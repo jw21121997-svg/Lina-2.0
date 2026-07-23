@@ -88,32 +88,38 @@ export const CalendarModule: React.FC = () => {
 
       {/* Events List */}
       <div className="space-y-3">
-        {calendar.map((ev) => (
-          <div
-            key={ev.id}
-            className="p-5 rounded-3xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs hover:border-slate-700 transition-all"
-          >
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-base text-white">{ev.title}</span>
-                <span className="px-2.5 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 uppercase font-extrabold text-[10px]">
-                  {ev.category}
-                </span>
-              </div>
-              <div className="flex items-center gap-4 text-slate-400 text-xs">
-                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {ev.date} {ev.time ? `@ ${ev.time}` : ''}</span>
-                {ev.location && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {ev.location}</span>}
-              </div>
-            </div>
-
-            <button
-              onClick={() => handleDelete(ev.id)}
-              className="p-2 text-slate-500 hover:text-red-400 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
+        {calendar.length === 0 ? (
+          <div className="p-8 text-center text-xs text-slate-400 bg-slate-900/40 rounded-3xl border border-slate-800">
+            No events on your family calendar yet. Fill out the form above to schedule your first event.
           </div>
-        ))}
+        ) : (
+          calendar.map((ev) => (
+            <div
+              key={ev.id}
+              className="p-5 rounded-3xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs hover:border-slate-700 transition-all"
+            >
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-base text-white">{ev.title}</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 uppercase font-extrabold text-[10px]">
+                    {ev.category}
+                  </span>
+                </div>
+                <div className="flex items-center gap-4 text-slate-400 text-xs">
+                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {ev.date} {ev.time ? `@ ${ev.time}` : ''}</span>
+                  {ev.location && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {ev.location}</span>}
+                </div>
+              </div>
+
+              <button
+                onClick={() => handleDelete(ev.id)}
+                className="p-2 text-slate-500 hover:text-red-400 transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

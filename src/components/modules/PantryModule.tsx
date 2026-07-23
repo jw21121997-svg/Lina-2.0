@@ -93,59 +93,65 @@ export const PantryModule: React.FC = () => {
 
       {/* Inventory Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {pantry.map((item) => {
-          const isLow = item.quantity <= item.minThreshold;
-          return (
-            <div
-              key={item.id}
-              className={`p-5 rounded-3xl border transition-all flex flex-col justify-between ${
-                isLow ? 'bg-amber-950/20 border-amber-500/40' : 'bg-slate-900/60 border-slate-800'
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-slate-800 text-violet-300 font-bold text-[10px] uppercase">
-                    {item.location}
-                  </span>
-                  {isLow && (
-                    <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] flex items-center gap-1">
-                      <AlertTriangle className="w-3 h-3" /> Low Stock
+        {pantry.length === 0 ? (
+          <div className="col-span-full p-8 text-center text-xs text-slate-400 bg-slate-900/40 rounded-3xl border border-slate-800">
+            No pantry items registered yet. Use the form above to record fridge, freezer, or pantry stock.
+          </div>
+        ) : (
+          pantry.map((item) => {
+            const isLow = item.quantity <= item.minThreshold;
+            return (
+              <div
+                key={item.id}
+                className={`p-5 rounded-3xl border transition-all flex flex-col justify-between ${
+                  isLow ? 'bg-amber-950/20 border-amber-500/40' : 'bg-slate-900/60 border-slate-800'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-slate-800 text-violet-300 font-bold text-[10px] uppercase">
+                      {item.location}
                     </span>
-                  )}
+                    {isLow && (
+                      <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3" /> Low Stock
+                      </span>
+                    )}
+                  </div>
+                  <div className="font-bold text-base text-white">{item.name}</div>
+                  <div className="text-xs text-slate-400 mt-1">{item.category} • Min: {item.minThreshold} {item.unit}</div>
                 </div>
-                <div className="font-bold text-base text-white">{item.name}</div>
-                <div className="text-xs text-slate-400 mt-1">{item.category} • Min: {item.minThreshold} {item.unit}</div>
-              </div>
 
-              <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between mt-4">
-                <div className="text-sm font-extrabold text-slate-200">
-                  Quantity: <span className={isLow ? 'text-amber-400 font-black' : 'text-white'}>{item.quantity}</span>
-                </div>
+                <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between mt-4">
+                  <div className="text-sm font-extrabold text-slate-200">
+                    Quantity: <span className={isLow ? 'text-amber-400 font-black' : 'text-white'}>{item.quantity}</span>
+                  </div>
 
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => handleUpdateQty(item.id, item.quantity, -1)}
-                    className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleUpdateQty(item.id, item.quantity, 1)}
-                    className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => api.deletePantryItem(item.id).then(refreshAllModules)}
-                    className="p-1.5 text-slate-500 hover:text-red-400"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => handleUpdateQty(item.id, item.quantity, -1)}
+                      className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleUpdateQty(item.id, item.quantity, 1)}
+                      className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => api.deletePantryItem(item.id).then(refreshAllModules)}
+                      className="p-1.5 text-slate-500 hover:text-red-400"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );

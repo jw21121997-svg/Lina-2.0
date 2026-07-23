@@ -86,33 +86,39 @@ export const BillsModule: React.FC = () => {
       </form>
 
       <div className="space-y-3">
-        {bills.map((bill) => (
-          <div
-            key={bill.id}
-            className="p-5 rounded-3xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs hover:border-slate-700 transition-all"
-          >
-            <div>
-              <div className="font-bold text-base text-white">{bill.title}</div>
-              <div className="text-slate-400 text-xs mt-1">
-                {bill.category} • Due: {bill.dueDate} • {bill.frequency} • {bill.autoPay ? 'Auto-Pay Active' : 'Manual Payment'}
+        {bills.length === 0 ? (
+          <div className="p-8 text-center text-xs text-slate-400 bg-slate-900/40 rounded-3xl border border-slate-800">
+            No recurring bills logged yet. Use the form above to add your first bill or subscription.
+          </div>
+        ) : (
+          bills.map((bill) => (
+            <div
+              key={bill.id}
+              className="p-5 rounded-3xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs hover:border-slate-700 transition-all"
+            >
+              <div>
+                <div className="font-bold text-base text-white">{bill.title}</div>
+                <div className="text-slate-400 text-xs mt-1">
+                  {bill.category} • Due: {bill.dueDate} • {bill.frequency} • {bill.autoPay ? 'Auto-Pay Active' : 'Manual Payment'}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <span className="text-base font-extrabold text-white">${bill.amount.toFixed(2)}</span>
+                <button
+                  onClick={() => handleToggleStatus(bill.id, bill.status)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    bill.status === 'Paid'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                      : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                  }`}
+                >
+                  {bill.status}
+                </button>
               </div>
             </div>
-
-            <div className="flex items-center gap-4">
-              <span className="text-base font-extrabold text-white">${bill.amount.toFixed(2)}</span>
-              <button
-                onClick={() => handleToggleStatus(bill.id, bill.status)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                  bill.status === 'Paid'
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                }`}
-              >
-                {bill.status}
-              </button>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
