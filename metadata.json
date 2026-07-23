@@ -1,0 +1,6 @@
+{
+  "name": "Lina 2.0",
+  "description": "Agentic AI Home & Family Assistant with smart tool execution, 15 dedicated home management modules, multi-model AI chat, and family collaboration.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,85 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /test/{testId} {
+      allow read, write: if true;
+    }
+
+    match /familyMembers/{memberId} {
+      allow read, write: if true;
+    }
+
+    match /memories/{memoryId} {
+      allow read, write: if true;
+    }
+
+    match /shoppingList/{itemId} {
+      allow read, write: if true;
+    }
+
+    match /budget/{entryId} {
+      allow read, write: if true;
+    }
+
+    match /calendar/{eventId} {
+      allow read, write: if true;
+    }
+
+    match /reminders/{reminderId} {
+      allow read, write: if true;
+    }
+
+    match /chores/{choreId} {
+      allow read, write: if true;
+    }
+
+    match /rewardCatalog/{rewardId} {
+      allow read, write: if true;
+    }
+
+    match /pantry/{itemId} {
+      allow read, write: if true;
+    }
+
+    match /notes/{noteId} {
+      allow read, write: if true;
+    }
+
+    match /mealPlans/{dayId} {
+      allow read, write: if true;
+    }
+
+    match /recipes/{recipeId} {
+      allow read, write: if true;
+    }
+
+    match /bills/{billId} {
+      allow read, write: if true;
+    }
+
+    match /maintenance/{taskId} {
+      allow read, write: if true;
+    }
+
+    match /pets/{petId} {
+      allow read, write: if true;
+    }
+
+    match /wishlist/{itemId} {
+      allow read, write: if true;
+    }
+
+    match /emergency/{contactId} {
+      allow read, write: if true;
+    }
+
+    match /familyChat/{msgId} {
+      allow read, write: if true;
+    }
+  }
+}

@@ -1,0 +1,304 @@
+{
+  "entities": {
+    "FamilyMember": {
+      "title": "Family Member",
+      "description": "Represents a family member profile in the household",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique ID of family member" },
+        "name": { "type": "string", "description": "Name of family member", "maxLength": 100 },
+        "role": { "type": "string", "description": "Parent, Teen, Kid, etc.", "maxLength": 50 },
+        "avatar": { "type": "string", "description": "Avatar emoji or URL", "maxLength": 200 },
+        "color": { "type": "string", "description": "Theme color code", "maxLength": 20 },
+        "pointsBalance": { "type": "number", "description": "Reward points balance" }
+      },
+      "required": ["name", "role"]
+    },
+    "AIMemory": {
+      "title": "AI Memory",
+      "description": "Saved memory/fact for the AI assistant",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string", "maxLength": 50 },
+        "fact": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["category", "fact"]
+    },
+    "ShoppingItem": {
+      "title": "Shopping Item",
+      "description": "Item on the household shopping list",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 200 },
+        "category": { "type": "string", "maxLength": 100 },
+        "quantity": { "type": "number" },
+        "unit": { "type": "string", "maxLength": 50 },
+        "isChecked": { "type": "boolean" },
+        "addedBy": { "type": "string", "maxLength": 100 },
+        "urgent": { "type": "boolean" },
+        "pantrySynced": { "type": "boolean" },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["name"]
+    },
+    "BudgetEntry": {
+      "title": "Budget Entry",
+      "description": "Household income or expense record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["income", "expense"] },
+        "category": { "type": "string", "maxLength": 100 },
+        "amount": { "type": "number" },
+        "description": { "type": "string", "maxLength": 500 },
+        "date": { "type": "string", "maxLength": 50 },
+        "paidBy": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["type", "category", "amount"]
+    },
+    "CalendarEvent": {
+      "title": "Calendar Event",
+      "description": "Family schedule event or appointment",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "date": { "type": "string", "maxLength": 50 },
+        "time": { "type": "string", "maxLength": 50 },
+        "location": { "type": "string", "maxLength": 200 },
+        "category": { "type": "string", "maxLength": 50 },
+        "attendees": { "type": "array" },
+        "notes": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["title", "date"]
+    },
+    "ReminderItem": {
+      "title": "Reminder Item",
+      "description": "Task or reminder for household",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "dueDate": { "type": "string", "maxLength": 50 },
+        "dueTime": { "type": "string", "maxLength": 50 },
+        "priority": { "type": "string", "maxLength": 20 },
+        "isCompleted": { "type": "boolean" },
+        "recurring": { "type": "string", "maxLength": 50 },
+        "assignedTo": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["title"]
+    },
+    "ChoreItem": {
+      "title": "Chore Item",
+      "description": "Assigned chore with reward points",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "assignedTo": { "type": "string", "maxLength": 100 },
+        "points": { "type": "number" },
+        "isCompleted": { "type": "boolean" },
+        "completedAt": { "type": "string", "maxLength": 50 },
+        "dueDate": { "type": "string", "maxLength": 50 },
+        "category": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["title", "assignedTo"]
+    },
+    "RewardCatalogItem": {
+      "title": "Reward Catalog Item",
+      "description": "Reward option in the points catalog",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "pointsCost": { "type": "number" },
+        "description": { "type": "string", "maxLength": 500 },
+        "icon": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["title", "pointsCost"]
+    },
+    "PantryItem": {
+      "title": "Pantry Item",
+      "description": "Food item in pantry, fridge, or freezer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 200 },
+        "category": { "type": "string", "maxLength": 100 },
+        "quantity": { "type": "number" },
+        "unit": { "type": "string", "maxLength": 50 },
+        "minThreshold": { "type": "number" },
+        "expirationDate": { "type": "string", "maxLength": 50 },
+        "location": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["name"]
+    },
+    "NoteItem": {
+      "title": "Note Item",
+      "description": "Household note, guide, or recipe",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "content": { "type": "string", "maxLength": 5000 },
+        "category": { "type": "string", "maxLength": 50 },
+        "tags": { "type": "array" },
+        "isPinned": { "type": "boolean" },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["title", "content"]
+    },
+    "MealPlanDay": {
+      "title": "Meal Plan Day",
+      "description": "Planned meals for a day of the week",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "day": { "type": "string", "maxLength": 20 },
+        "date": { "type": "string", "maxLength": 50 },
+        "breakfast": { "type": "string", "maxLength": 500 },
+        "lunch": { "type": "string", "maxLength": 500 },
+        "dinner": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["day"]
+    },
+    "RecipeBookmark": {
+      "title": "Recipe Bookmark",
+      "description": "Saved family recipe",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "prepTime": { "type": "string", "maxLength": 50 },
+        "servings": { "type": "number" },
+        "category": { "type": "string", "maxLength": 50 },
+        "ingredients": { "type": "array" },
+        "instructions": { "type": "array" },
+        "isFavorite": { "type": "boolean" }
+      },
+      "required": ["title"]
+    },
+    "BillItem": {
+      "title": "Bill Item",
+      "description": "Upcoming or paid utility bill or subscription",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "amount": { "type": "number" },
+        "dueDate": { "type": "string", "maxLength": 50 },
+        "frequency": { "type": "string", "maxLength": 50 },
+        "category": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "maxLength": 50 },
+        "autoPay": { "type": "boolean" },
+        "provider": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["title", "amount"]
+    },
+    "MaintenanceTask": {
+      "title": "Maintenance Task",
+      "description": "Home maintenance or service task",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "taskName": { "type": "string", "maxLength": 200 },
+        "location": { "type": "string", "maxLength": 100 },
+        "lastDone": { "type": "string", "maxLength": 50 },
+        "nextDue": { "type": "string", "maxLength": 50 },
+        "frequencyMonths": { "type": "number" },
+        "status": { "type": "string", "maxLength": 50 },
+        "estimatedCost": { "type": "number" }
+      },
+      "required": ["taskName"]
+    },
+    "PetProfile": {
+      "title": "Pet Profile",
+      "description": "Household pet information and care schedule",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "species": { "type": "string", "maxLength": 50 },
+        "breed": { "type": "string", "maxLength": 100 },
+        "age": { "type": "string", "maxLength": 50 },
+        "feedingSchedule": { "type": "string", "maxLength": 500 },
+        "vetName": { "type": "string", "maxLength": 200 },
+        "vetPhone": { "type": "string", "maxLength": 50 },
+        "medications": { "type": "array" },
+        "lastVaccineDate": { "type": "string", "maxLength": 50 },
+        "notes": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["name"]
+    },
+    "WishlistItem": {
+      "title": "Wishlist Item",
+      "description": "Gift or personal wishlist item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "forPerson": { "type": "string", "maxLength": 100 },
+        "price": { "type": "number" },
+        "priority": { "type": "string", "maxLength": 50 },
+        "isClaimed": { "type": "boolean" },
+        "claimedBy": { "type": "string", "maxLength": 100 },
+        "occasion": { "type": "string", "maxLength": 100 },
+        "link": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["title"]
+    },
+    "EmergencyContact": {
+      "title": "Emergency Contact",
+      "description": "Emergency or service contact detail",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 200 },
+        "role": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "address": { "type": "string", "maxLength": 300 },
+        "category": { "type": "string", "maxLength": 50 },
+        "notes": { "type": "string", "maxLength": 500 },
+        "policyNumber": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["name", "phone"]
+    },
+    "FamilyChatMessage": {
+      "title": "Family Chat Message",
+      "description": "Message in the family chat room",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "senderName": { "type": "string", "maxLength": 100 },
+        "senderAvatar": { "type": "string", "maxLength": 200 },
+        "content": { "type": "string", "maxLength": 2000 },
+        "timestamp": { "type": "string", "maxLength": 50 },
+        "isAiResponse": { "type": "boolean" }
+      },
+      "required": ["senderName", "content"]
+    }
+  },
+  "firestore": {
+    "/familyMembers/{memberId}": { "schema": { "$ref": "#/entities/FamilyMember" }, "description": "Family members" },
+    "/memories/{memoryId}": { "schema": { "$ref": "#/entities/AIMemory" }, "description": "AI memories" },
+    "/shoppingList/{itemId}": { "schema": { "$ref": "#/entities/ShoppingItem" }, "description": "Shopping list items" },
+    "/budget/{entryId}": { "schema": { "$ref": "#/entities/BudgetEntry" }, "description": "Budget entries" },
+    "/calendar/{eventId}": { "schema": { "$ref": "#/entities/CalendarEvent" }, "description": "Calendar events" },
+    "/reminders/{reminderId}": { "schema": { "$ref": "#/entities/ReminderItem" }, "description": "Reminders" },
+    "/chores/{choreId}": { "schema": { "$ref": "#/entities/ChoreItem" }, "description": "Chores" },
+    "/rewardCatalog/{rewardId}": { "schema": { "$ref": "#/entities/RewardCatalogItem" }, "description": "Reward catalog" },
+    "/pantry/{itemId}": { "schema": { "$ref": "#/entities/PantryItem" }, "description": "Pantry inventory" },
+    "/notes/{noteId}": { "schema": { "$ref": "#/entities/NoteItem" }, "description": "Notes & recipe guides" },
+    "/mealPlans/{dayId}": { "schema": { "$ref": "#/entities/MealPlanDay" }, "description": "Weekly meal planner" },
+    "/recipes/{recipeId}": { "schema": { "$ref": "#/entities/RecipeBookmark" }, "description": "Recipes" },
+    "/bills/{billId}": { "schema": { "$ref": "#/entities/BillItem" }, "description": "Bills & subscriptions" },
+    "/maintenance/{taskId}": { "schema": { "$ref": "#/entities/MaintenanceTask" }, "description": "Home maintenance" },
+    "/pets/{petId}": { "schema": { "$ref": "#/entities/PetProfile" }, "description": "Pet profiles" },
+    "/wishlist/{itemId}": { "schema": { "$ref": "#/entities/WishlistItem" }, "description": "Family wishlists" },
+    "/emergency/{contactId}": { "schema": { "$ref": "#/entities/EmergencyContact" }, "description": "Emergency contacts" },
+    "/familyChat/{msgId}": { "schema": { "$ref": "#/entities/FamilyChatMessage" }, "description": "Family chat messages" }
+  }
+}
