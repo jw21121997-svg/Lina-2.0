@@ -58,7 +58,7 @@ export const ChoresModule: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 bg-slate-950 text-slate-100 min-h-[calc(100vh-4rem)]">
+    <div className="flex-1 h-full overflow-y-auto min-h-0 p-4 md:p-8 space-y-8 bg-slate-950 text-slate-100">
       {/* Header */}
       <div className="border-b border-slate-800 pb-5">
         <div className="flex items-center gap-2">

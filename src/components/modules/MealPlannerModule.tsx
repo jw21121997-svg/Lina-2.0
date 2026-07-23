@@ -22,7 +22,7 @@ export const MealPlannerModule: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 bg-slate-950 text-slate-100 min-h-[calc(100vh-4rem)]">
+    <div className="flex-1 h-full overflow-y-auto min-h-0 p-4 md:p-8 space-y-8 bg-slate-950 text-slate-100">
       {/* Title */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
         <div>

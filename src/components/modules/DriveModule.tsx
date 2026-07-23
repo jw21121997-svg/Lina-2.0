@@ -306,7 +306,7 @@ export const DriveModule: React.FC = () => {
   // Render Login Prompt if not authenticated
   if (!accessToken) {
     return (
-      <div className="flex-1 p-6 flex flex-col items-center justify-center min-h-[500px]">
+      <div className="flex-1 h-full overflow-y-auto min-h-0 p-6 flex flex-col items-center justify-center">
         <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center shadow-2xl space-y-6">
           <div className="w-16 h-16 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center mx-auto text-violet-400">
             <HardDrive className="w-8 h-8" />
@@ -365,7 +365,7 @@ export const DriveModule: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto">
+    <div className="flex-1 h-full overflow-y-auto min-h-0 p-4 md:p-6 space-y-6">
       {/* Toast notification */}
       {toastMessage && (
         <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-2xl bg-violet-600 text-white font-medium text-xs shadow-xl flex items-center gap-2 animate-bounce">

@@ -74,10 +74,10 @@ function MainAppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-violet-500 selection:text-white">
+    <div className="h-screen h-[100dvh] w-full bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-violet-500 selection:text-white overflow-hidden">
       <Header onToggleSidebar={() => setIsSidebarOpenMobile(!isSidebarOpenMobile)} />
 
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 flex min-h-0 overflow-hidden relative">
         <Sidebar isOpen={isSidebarOpenMobile} onCloseMobile={() => setIsSidebarOpenMobile(false)} />
 
         {/* Mobile Sidebar Overlay */}
@@ -88,7 +88,7 @@ function MainAppContent() {
           />
         )}
 
-        <main className="flex-1 flex flex-col min-w-0 overflow-hidden pb-16 md:pb-0">
+        <main className="flex-1 flex flex-col min-w-0 h-full min-h-0 overflow-hidden pb-16 md:pb-0">
           {renderActiveModule()}
         </main>
       </div>

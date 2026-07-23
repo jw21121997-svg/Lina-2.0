@@ -37,7 +37,7 @@ export const BillsModule: React.FC = () => {
   const totalMonthlyCost = bills.reduce((sum, b) => sum + b.amount, 0);
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 bg-slate-950 text-slate-100 min-h-[calc(100vh-4rem)]">
+    <div className="flex-1 h-full overflow-y-auto min-h-0 p-4 md:p-8 space-y-6 bg-slate-950 text-slate-100">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
         <div>
           <div className="flex items-center gap-2">

@@ -115,13 +115,13 @@ export const ChatContainer: React.FC = () => {
   ];
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] bg-slate-950 text-slate-100 overflow-hidden relative">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-slate-950 text-slate-100 overflow-hidden relative">
       {/* Background Subtle Ambient Glow */}
       <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto min-h-0 p-4 md:p-6 space-y-6 overscroll-contain">
         {currentConv?.messages.map((msg) => {
           const isUser = msg.role === 'user';
           return (
@@ -254,7 +254,7 @@ export const ChatContainer: React.FC = () => {
       )}
 
       {/* Input Box Area */}
-      <div className="p-4 border-t border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
+      <div className="p-4 border-t border-slate-800/80 bg-slate-950/80 backdrop-blur-xl shrink-0">
         <form onSubmit={handleSend} className="max-w-4xl mx-auto space-y-2">
           {/* File Attachments Bar */}
           {attachments.length > 0 && (

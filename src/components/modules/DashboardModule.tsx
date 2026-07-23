@@ -37,7 +37,7 @@ export const DashboardModule: React.FC = () => {
   const greetingName = user?.name ? user.name.split(' ')[0] : 'Home Lead';
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 bg-slate-950 text-slate-100 min-h-[calc(100vh-4rem)]">
+    <div className="flex-1 h-full overflow-y-auto min-h-0 p-4 md:p-8 space-y-8 bg-slate-950 text-slate-100">
       {/* Hero Welcome Banner */}
       <div className="relative rounded-3xl bg-gradient-to-r from-violet-950/80 via-indigo-950/60 to-slate-900 border border-violet-500/30 p-6 md:p-8 shadow-2xl overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />

@@ -25,9 +25,9 @@ export const FamilyRoomModule: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] bg-slate-950 text-slate-100 overflow-hidden">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-slate-950 text-slate-100 overflow-hidden">
       {/* Top Header */}
-      <div className="p-4 md:p-6 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md flex items-center justify-between">
+      <div className="p-4 md:p-6 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md flex items-center justify-between shrink-0">
         <div>
           <div className="flex items-center gap-2">
             <Users className="w-6 h-6 text-violet-400" />
@@ -57,7 +57,7 @@ export const FamilyRoomModule: React.FC = () => {
       </div>
 
       {/* Messages Feed */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto min-h-0 p-4 md:p-6 space-y-4 overscroll-contain">
         {familyChat.map((msg) => (
           <div
             key={msg.id}
@@ -88,7 +88,7 @@ export const FamilyRoomModule: React.FC = () => {
       </div>
 
       {/* Input Bar */}
-      <form onSubmit={handleSend} className="p-4 border-t border-slate-800 bg-slate-950">
+      <form onSubmit={handleSend} className="p-4 border-t border-slate-800 bg-slate-950 shrink-0">
         <div className="max-w-4xl mx-auto flex items-center gap-2">
           <input
             type="text"
