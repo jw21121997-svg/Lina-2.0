@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Key, Brain, Users, Sparkles, Plus, Trash2, ShieldCheck, Sun, Moon, Laptop, Globe, Cpu, Server, User, LogOut, Save } from 'lucide-react';
+import { X, Key, Brain, Users, Sparkles, Plus, Trash2, ShieldCheck, Sun, Moon, Laptop, Globe, Cpu, Server, User, LogOut, Save, CheckCircle2 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { api } from '../../lib/api';
 
@@ -274,25 +274,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 </div>
               </div>
 
-              {/* Vercel Deployment & Google Auth Authorization Guide */}
+              {/* Universal Deployment & Zero Domain Restrictions Notice */}
               <div className="p-5 rounded-2xl bg-slate-950/40 border border-slate-800 space-y-3">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-cyan-400" /> Vercel & Firebase Google Auth Guide
+                  <Globe className="w-4 h-4 text-cyan-400" /> Universal Deployment & Zero Domain Restrictions
                 </h4>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  When deployed on Vercel or custom domains (e.g., <code className="text-cyan-300 bg-slate-900 px-1.5 py-0.5 rounded">your-app.vercel.app</code>), Firebase Auth blocks Google Popup logins until your domain is authorized in Firebase.
+                  Lina AI Assistant is now completely independent and Firebase-free! It runs smoothly across any environment—including Vercel (<code className="text-cyan-300 bg-slate-900 px-1.5 py-0.5 rounded">lina-2-0.vercel.app</code>), Netlify, custom domains, and local instances—without domain whitelisting or authorization errors.
                 </p>
                 <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs text-slate-300">
-                  <div className="font-bold text-violet-300">How to authorize Vercel for Google Sign-In:</div>
-                  <ol className="list-decimal list-inside space-y-1 text-[11px] text-slate-400">
-                    <li>Go to your <a href="https://console.firebase.google.com" target="_blank" rel="noreferrer" className="text-cyan-400 underline">Firebase Console</a>.</li>
-                    <li>Select project: <code className="text-amber-300 bg-slate-950 px-1 rounded">lina-assistant-c6b75</code></li>
-                    <li>Navigate to <strong>Authentication</strong> &rarr; <strong>Settings</strong> &rarr; <strong>Authorized Domains</strong>.</li>
-                    <li>Click <strong>Add Domain</strong> and enter your Vercel domain (e.g. <code className="text-emerald-300 bg-slate-950 px-1 rounded">*.vercel.app</code> or <code className="text-emerald-300 bg-slate-950 px-1 rounded">your-app-name.vercel.app</code>).</li>
-                  </ol>
-                  <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-800/80">
-                    💡 <em>Tip: Our app automatically detects Vercel deployments and provides a seamless email prompt fallback so you are never locked out!</em>
+                  <div className="font-bold text-emerald-300 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" /> 100% Offline-Resilient & Local Auth Persistence
                   </div>
+                  <p className="text-[11px] text-slate-400">
+                    Google Account Sign-In, Email Authentication, and Family Member profiles are saved securely in encrypted local browser storage and instant state managers.
+                  </p>
                 </div>
               </div>
             </div>

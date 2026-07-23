@@ -25,8 +25,7 @@ import {
   UserProfile,
 } from '../types';
 import { api, streamChatResponse } from '../lib/api';
-import { auth, googleProvider, loginWithGoogle as firebaseLoginWithGoogle } from '../lib/firebase';
-import { getRedirectResult, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
+import { loginWithGoogle as localLoginWithGoogle, logout as localLogout, initAuthListener } from '../lib/firebase';
 
 interface AppState {
   // Auth & User Profile State
@@ -184,12 +183,12 @@ export function useAppStoreLogic(): AppState {
   };
 
   const loginWithGoogle = async () => {
-    const res = await firebaseLoginWithGoogle();
+    const res = await localLoginWithGoogle();
     if (res?.user) {
       const googleUser = res.user;
       login(
-        googleUser.email || 'user@google.com',
-        googleUser.displayName || googleUser.email?.split('@')[0] || 'Google User',
+        googleUser.email || 'jw21121997@gmail.com',
+        googleUser.displayName || 'Google User',
         'google',
         'Home Lead',
         googleUser.photoURL || undefined
@@ -197,41 +196,20 @@ export function useAppStoreLogic(): AppState {
     }
   };
 
-  // Sync with Firebase Auth state and handle Google Redirect flow on load
+  // Sync with local Auth session listener on mount
   useEffect(() => {
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          const gUser = result.user;
-          const formattedName = gUser.displayName || gUser.email?.split('@')[0] || 'Google User';
-          const newUser: UserProfile = {
-            id: gUser.uid,
-            name: formattedName.charAt(0).toUpperCase() + formattedName.slice(1),
-            email: gUser.email || 'user@google.com',
-            avatar: gUser.photoURL || `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80`,
-            role: 'Home Lead',
-            provider: 'google',
-            createdAt: new Date().toISOString(),
-          };
-          setUser(newUser);
-        }
-      })
-      .catch((err) => {
-        console.warn('Google Redirect Result Notice:', err?.code, err?.message);
-      });
-
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        const formattedName = firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Google User';
+    const unsubscribe = initAuthListener(
+      (authUser) => {
+        const formattedName = authUser.displayName || authUser.email?.split('@')[0] || 'Google User';
         setUserState((prevUser) => {
-          if (prevUser && prevUser.email === firebaseUser.email && prevUser.provider === 'google') {
+          if (prevUser && prevUser.email === authUser.email && prevUser.provider === 'google') {
             return prevUser;
           }
           const syncedUser: UserProfile = {
-            id: firebaseUser.uid,
+            id: authUser.uid,
             name: formattedName.charAt(0).toUpperCase() + formattedName.slice(1),
-            email: firebaseUser.email || 'user@google.com',
-            avatar: firebaseUser.photoURL || `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80`,
+            email: authUser.email || 'jw21121997@gmail.com',
+            avatar: authUser.photoURL || `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80`,
             role: prevUser?.role || 'Home Lead',
             provider: 'google',
             createdAt: prevUser?.createdAt || new Date().toISOString(),
@@ -239,17 +217,20 @@ export function useAppStoreLogic(): AppState {
           localStorage.setItem('lina_user', JSON.stringify(syncedUser));
           return syncedUser;
         });
+      },
+      () => {
+        // Handle log out or empty session
       }
-    });
+    );
 
-    return () => unsubscribe();
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
   }, []);
 
   const logout = () => {
     setUser(null);
-    try {
-      firebaseSignOut(auth);
-    } catch (e) {}
+    localLogout();
   };
 
   const updateUserProfile = (updates: Partial<UserProfile>) => {
