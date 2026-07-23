@@ -25,7 +25,7 @@ import {
   UserProfile,
 } from '../types';
 import { api, streamChatResponse } from '../lib/api';
-import { loginWithGoogle as localLoginWithGoogle, logout as localLogout, initAuthListener } from '../lib/firebase';
+import { loginWithGoogle as firebaseLoginWithGoogle, logout as firebaseLogout, initAuthListener } from '../lib/firebase';
 
 interface AppState {
   // Auth & User Profile State
@@ -183,12 +183,12 @@ export function useAppStoreLogic(): AppState {
   };
 
   const loginWithGoogle = async () => {
-    const res = await localLoginWithGoogle();
+    const res = await firebaseLoginWithGoogle();
     if (res?.user) {
       const googleUser = res.user;
       login(
-        googleUser.email || 'jw21121997@gmail.com',
-        googleUser.displayName || 'Google User',
+        googleUser.email || 'user@google.com',
+        googleUser.displayName || googleUser.email?.split('@')[0] || 'Google User',
         'google',
         'Home Lead',
         googleUser.photoURL || undefined
@@ -196,7 +196,7 @@ export function useAppStoreLogic(): AppState {
     }
   };
 
-  // Sync with local Auth session listener on mount
+  // Sync with Firebase Auth state listener on mount
   useEffect(() => {
     const unsubscribe = initAuthListener(
       (authUser) => {
@@ -208,7 +208,7 @@ export function useAppStoreLogic(): AppState {
           const syncedUser: UserProfile = {
             id: authUser.uid,
             name: formattedName.charAt(0).toUpperCase() + formattedName.slice(1),
-            email: authUser.email || 'jw21121997@gmail.com',
+            email: authUser.email || 'user@google.com',
             avatar: authUser.photoURL || `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80`,
             role: prevUser?.role || 'Home Lead',
             provider: 'google',
@@ -219,7 +219,7 @@ export function useAppStoreLogic(): AppState {
         });
       },
       () => {
-        // Handle log out or empty session
+        // Unauthenticated state
       }
     );
 
@@ -230,7 +230,7 @@ export function useAppStoreLogic(): AppState {
 
   const logout = () => {
     setUser(null);
-    localLogout();
+    firebaseLogout();
   };
 
   const updateUserProfile = (updates: Partial<UserProfile>) => {

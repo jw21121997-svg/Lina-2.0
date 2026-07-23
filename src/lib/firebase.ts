@@ -1,117 +1,90 @@
-// Local Authentication & Session Manager (Firebase-Free Architecture)
-// Solves domain authorization errors on Vercel, Netlify, and custom domains.
+import { initializeApp } from 'firebase/app';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+  User,
+} from 'firebase/auth';
+import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
+import firebaseConfig from '../../firebase-applet-config.json';
 
-export interface LocalAuthUser {
-  uid: string;
-  email: string;
-  displayName: string;
-  photoURL?: string;
-}
+// Initialize Firebase App
+const app = initializeApp(firebaseConfig);
 
-let currentUser: LocalAuthUser | null = null;
-let currentToken: string | null = null;
-const listeners: Array<(user: LocalAuthUser | null) => void> = [];
+// Initialize Firebase Auth & Firestore
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-// Load persisted user session on boot
-if (typeof window !== 'undefined') {
+export const db = getFirestore(app);
+
+let cachedAccessToken: string | null = null;
+let isSigningIn = false;
+
+export const getCachedAccessToken = (): string | null => cachedAccessToken;
+
+/**
+ * Perform real Google Sign-In via Firebase Auth Popup
+ */
+export async function loginWithGoogle() {
   try {
-    const saved = localStorage.getItem('lina_auth_user');
-    if (saved) {
-      currentUser = JSON.parse(saved);
-      currentToken = localStorage.getItem('lina_auth_token') || 'google_token_' + Date.now();
+    isSigningIn = true;
+    const result = await signInWithPopup(auth, googleProvider);
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    if (credential?.accessToken) {
+      cachedAccessToken = credential.accessToken;
     }
-  } catch (e) {
-    console.warn('Notice loading local session:', e);
+    return { user: result.user, accessToken: cachedAccessToken };
+  } catch (error: any) {
+    console.error('Firebase Google Sign-In Error:', error?.code, error?.message);
+    if (
+      error?.code === 'auth/unauthorized-domain' ||
+      error?.message?.includes('unauthorized-domain')
+    ) {
+      const currentDomain = typeof window !== 'undefined' ? window.location.hostname : 'your domain';
+      throw new Error(
+        `Domain Unauthorized: '${currentDomain}' is not listed in Firebase Authorized Domains. Please add '${currentDomain}' in Firebase Console > Authentication > Settings > Authorized Domains.`
+      );
+    }
+    throw error;
+  } finally {
+    isSigningIn = false;
   }
 }
 
-function notifyListeners() {
-  listeners.forEach((fn) => fn(currentUser));
+/**
+ * Sign out from Firebase Auth
+ */
+export async function logout() {
+  cachedAccessToken = null;
+  return await signOut(auth);
 }
 
-export const getCachedAccessToken = (): string | null => currentToken;
-
+/**
+ * Helper to subscribe to Firebase Auth state changes
+ */
 export function initAuthListener(
-  onSuccess?: (user: LocalAuthUser, token: string) => void,
+  onSuccess?: (user: User, token: string) => void,
   onFailure?: () => void
 ) {
-  if (currentUser && onSuccess) {
-    onSuccess(currentUser, currentToken || 'google_token');
-  } else if (!currentUser && onFailure) {
-    onFailure();
-  }
-
-  const listener = (user: LocalAuthUser | null) => {
+  return onAuthStateChanged(auth, async (user) => {
     if (user) {
-      if (onSuccess) onSuccess(user, currentToken || 'google_token');
+      try {
+        const token = cachedAccessToken || (await user.getIdToken());
+        if (onSuccess) onSuccess(user, token);
+      } catch (err) {
+        console.warn('Error fetching user token:', err);
+        if (onSuccess) onSuccess(user, '');
+      }
     } else {
-      if (onFailure) onFailure();
+      if (!isSigningIn && onFailure) {
+        onFailure();
+      }
     }
-  };
-
-  listeners.push(listener);
-  return () => {
-    const idx = listeners.indexOf(listener);
-    if (idx >= 0) listeners.splice(idx, 1);
-  };
+  });
 }
-
-export async function loginWithGoogle(preferredEmail?: string) {
-  let email = preferredEmail;
-
-  if (!email && typeof window !== 'undefined') {
-    // Prompt user for their Google Email or default to their account email
-    const promptEmail = window.prompt(
-      'Sign in with Google Account:\n\nEnter your Google email address below:',
-      'jw21121997@gmail.com'
-    );
-    if (promptEmail && promptEmail.includes('@')) {
-      email = promptEmail.trim();
-    } else {
-      email = 'jw21121997@gmail.com';
-    }
-  }
-
-  const finalEmail = email || 'jw21121997@gmail.com';
-  const namePart = finalEmail.split('@')[0];
-  const displayName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-
-  currentUser = {
-    uid: 'google_usr_' + Date.now(),
-    email: finalEmail,
-    displayName: displayName,
-    photoURL: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80`,
-  };
-
-  currentToken = 'google_access_token_' + Date.now();
-
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('lina_auth_user', JSON.stringify(currentUser));
-    localStorage.setItem('lina_auth_token', currentToken);
-  }
-
-  notifyListeners();
-  return { user: currentUser, accessToken: currentToken };
-}
-
-export async function logout() {
-  currentUser = null;
-  currentToken = null;
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('lina_auth_user');
-    localStorage.removeItem('lina_auth_token');
-  }
-  notifyListeners();
-}
-
-// Export mock objects for backward compatibility
-export const db = {};
-export const auth = {
-  get currentUser() {
-    return currentUser;
-  },
-};
-export const googleProvider = {};
 
 export enum OperationType {
   CREATE = 'create',
@@ -123,5 +96,5 @@ export enum OperationType {
 }
 
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
-  console.error('Firestore Error handler:', error, operationType, path);
+  console.error('Firestore Error:', error, operationType, path);
 }
