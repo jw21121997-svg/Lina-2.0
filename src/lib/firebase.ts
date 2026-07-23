@@ -1,5 +1,14 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  signOut,
+  onAuthStateChanged,
+  User,
+} from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
@@ -104,12 +113,41 @@ testConnection();
 export async function loginWithGoogle() {
   try {
     isSigningIn = true;
-    const result = await signInWithPopup(auth, googleProvider);
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    if (credential?.accessToken) {
-      cachedAccessToken = credential.accessToken;
+    let result;
+    try {
+      result = await signInWithPopup(auth, googleProvider);
+    } catch (popupErr: any) {
+      console.warn('Google Popup Sign-In notice:', popupErr?.code, popupErr?.message);
+      
+      // If popup blocked or closed, try redirect flow
+      if (
+        popupErr?.code === 'auth/popup-blocked' ||
+        popupErr?.code === 'auth/popup-closed-by-user' ||
+        popupErr?.code === 'auth/cancelled-popup-request'
+      ) {
+        await signInWithRedirect(auth, googleProvider);
+        return null;
+      }
+
+      // Handle unauthorized domain specifically
+      if (popupErr?.code === 'auth/unauthorized-domain' || popupErr?.message?.includes('unauthorized-domain')) {
+        const domain = typeof window !== 'undefined' ? window.location.hostname : 'your domain';
+        throw new Error(
+          `Domain Unauthorized: '${domain}' is not authorized in Firebase Console. Please add '${domain}' to Firebase Console > Authentication > Settings > Authorized Domains.`
+        );
+      }
+
+      throw popupErr;
     }
-    return { user: result.user, accessToken: cachedAccessToken };
+
+    if (result) {
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      if (credential?.accessToken) {
+        cachedAccessToken = credential.accessToken;
+      }
+      return { user: result.user, accessToken: cachedAccessToken };
+    }
+    return null;
   } catch (error) {
     console.error('Google Sign-In Error:', error);
     throw error;

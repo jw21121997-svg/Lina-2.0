@@ -25,8 +25,8 @@ import {
   UserProfile,
 } from '../types';
 import { api, streamChatResponse } from '../lib/api';
-import { auth, googleProvider } from '../lib/firebase';
-import { signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
+import { auth, googleProvider, loginWithGoogle as firebaseLoginWithGoogle } from '../lib/firebase';
+import { getRedirectResult, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 
 interface AppState {
   // Auth & User Profile State
@@ -184,24 +184,66 @@ export function useAppStoreLogic(): AppState {
   };
 
   const loginWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const googleUser = result.user;
+    const res = await firebaseLoginWithGoogle();
+    if (res?.user) {
+      const googleUser = res.user;
       login(
-        googleUser.email || 'googleuser@gmail.com',
-        googleUser.displayName || 'Google User',
+        googleUser.email || 'user@google.com',
+        googleUser.displayName || googleUser.email?.split('@')[0] || 'Google User',
         'google',
         'Home Lead',
         googleUser.photoURL || undefined
       );
-    } catch (err: any) {
-      console.warn('Google sign-in popup notice / fallback applied:', err?.code, err?.message);
-      
-      // Fallback for unauthorized domain on Vercel, popup blocked, or iframe constraints
-      // Seamlessly logs in as a Google account so users are never blocked from entering the app
-      login('google.user@gmail.com', 'Google User', 'google', 'Home Lead');
     }
   };
+
+  // Sync with Firebase Auth state and handle Google Redirect flow on load
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          const gUser = result.user;
+          const formattedName = gUser.displayName || gUser.email?.split('@')[0] || 'Google User';
+          const newUser: UserProfile = {
+            id: gUser.uid,
+            name: formattedName.charAt(0).toUpperCase() + formattedName.slice(1),
+            email: gUser.email || 'user@google.com',
+            avatar: gUser.photoURL || `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80`,
+            role: 'Home Lead',
+            provider: 'google',
+            createdAt: new Date().toISOString(),
+          };
+          setUser(newUser);
+        }
+      })
+      .catch((err) => {
+        console.warn('Google Redirect Result Notice:', err?.code, err?.message);
+      });
+
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        const formattedName = firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Google User';
+        setUserState((prevUser) => {
+          if (prevUser && prevUser.email === firebaseUser.email && prevUser.provider === 'google') {
+            return prevUser;
+          }
+          const syncedUser: UserProfile = {
+            id: firebaseUser.uid,
+            name: formattedName.charAt(0).toUpperCase() + formattedName.slice(1),
+            email: firebaseUser.email || 'user@google.com',
+            avatar: firebaseUser.photoURL || `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80`,
+            role: prevUser?.role || 'Home Lead',
+            provider: 'google',
+            createdAt: prevUser?.createdAt || new Date().toISOString(),
+          };
+          localStorage.setItem('lina_user', JSON.stringify(syncedUser));
+          return syncedUser;
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const logout = () => {
     setUser(null);
