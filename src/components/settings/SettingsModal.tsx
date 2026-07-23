@@ -230,6 +230,71 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                   </button>
                 </div>
               </form>
+
+              {/* Theme & Appearance Preference */}
+              <div className="p-5 rounded-2xl bg-slate-950/40 border border-slate-800 space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                  <Sun className="w-4 h-4 text-amber-400" /> Interface Theme Mode
+                </h4>
+                <p className="text-xs text-slate-400">
+                  Select your preferred visual appearance for the Lina AI Assistant interface:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  {[
+                    { id: 'light', label: 'Light Theme', desc: 'Clean, crisp high-contrast layout', icon: Sun, color: 'text-amber-400' },
+                    { id: 'dark', label: 'Dark Theme', desc: 'Eye-friendly slate & twilight canvas', icon: Moon, color: 'text-violet-400' },
+                    { id: 'system', label: 'System Default', desc: 'Matches your OS dark/light setting', icon: Laptop, color: 'text-cyan-400' },
+                  ].map((tItem) => {
+                    const TIcon = tItem.icon;
+                    const isSelected = theme === tItem.id;
+                    return (
+                      <button
+                        key={tItem.id}
+                        type="button"
+                        onClick={() => setTheme(tItem.id as 'light' | 'dark' | 'system')}
+                        className={`p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+                          isSelected
+                            ? 'border-violet-500 bg-violet-600/15 text-white shadow-lg shadow-violet-500/10'
+                            : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <TIcon className={`w-5 h-5 ${tItem.color}`} />
+                          {isSelected && (
+                            <span className="text-[10px] bg-violet-500 text-white px-2 py-0.5 rounded-full font-bold">
+                              Active
+                            </span>
+                          )}
+                        </div>
+                        <div className="font-bold text-xs text-slate-100">{tItem.label}</div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">{tItem.desc}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Vercel Deployment & Google Auth Authorization Guide */}
+              <div className="p-5 rounded-2xl bg-slate-950/40 border border-slate-800 space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-cyan-400" /> Vercel & Firebase Google Auth Guide
+                </h4>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  When deployed on Vercel or custom domains (e.g., <code className="text-cyan-300 bg-slate-900 px-1.5 py-0.5 rounded">your-app.vercel.app</code>), Firebase Auth blocks Google Popup logins until your domain is authorized in Firebase.
+                </p>
+                <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs text-slate-300">
+                  <div className="font-bold text-violet-300">How to authorize Vercel for Google Sign-In:</div>
+                  <ol className="list-decimal list-inside space-y-1 text-[11px] text-slate-400">
+                    <li>Go to your <a href="https://console.firebase.google.com" target="_blank" rel="noreferrer" className="text-cyan-400 underline">Firebase Console</a>.</li>
+                    <li>Select project: <code className="text-amber-300 bg-slate-950 px-1 rounded">lina-assistant-c6b75</code></li>
+                    <li>Navigate to <strong>Authentication</strong> &rarr; <strong>Settings</strong> &rarr; <strong>Authorized Domains</strong>.</li>
+                    <li>Click <strong>Add Domain</strong> and enter your Vercel domain (e.g. <code className="text-emerald-300 bg-slate-950 px-1 rounded">*.vercel.app</code> or <code className="text-emerald-300 bg-slate-950 px-1 rounded">your-app-name.vercel.app</code>).</li>
+                  </ol>
+                  <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-800/80">
+                    💡 <em>Tip: Our app automatically detects Vercel deployments and provides a seamless email prompt fallback so you are never locked out!</em>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 

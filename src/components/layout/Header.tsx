@@ -7,6 +7,8 @@ import {
   Brain,
   Globe,
   Sun,
+  Moon,
+  Laptop,
   Cloud,
   ChevronDown,
   Menu,
@@ -16,6 +18,7 @@ import {
   LogOut,
   User,
   Shield,
+  Check,
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { VoiceAgentModal } from '../chat/VoiceAgentModal';
@@ -30,6 +33,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const {
     user,
     logout,
+    theme,
+    setTheme,
     activeModel,
     setActiveModel,
     thinkingEnabled,
@@ -47,6 +52,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
 
   return (
     <>
@@ -169,6 +175,56 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
             <Mic className="w-4 h-4 animate-pulse" />
             <span className="hidden sm:inline">Voice Agent</span>
           </button>
+
+          {/* Theme Switcher Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
+              className="p-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-1"
+              title={`Current Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)}`}
+            >
+              {theme === 'light' && <Sun className="w-4 h-4 text-amber-400" />}
+              {theme === 'dark' && <Moon className="w-4 h-4 text-violet-400" />}
+              {theme === 'system' && <Laptop className="w-4 h-4 text-cyan-400" />}
+              <ChevronDown className="w-3 h-3 text-slate-500" />
+            </button>
+
+            {isThemeDropdownOpen && (
+              <div className="absolute top-full mt-2 right-0 w-44 rounded-2xl bg-slate-900 border border-slate-800 p-2 shadow-2xl z-50 space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  Theme Options
+                </div>
+                {[
+                  { id: 'light', label: 'Light Theme', icon: Sun, color: 'text-amber-400' },
+                  { id: 'dark', label: 'Dark Theme', icon: Moon, color: 'text-violet-400' },
+                  { id: 'system', label: 'System Theme', icon: Laptop, color: 'text-cyan-400' },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  const isActive = theme === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setTheme(item.id as 'light' | 'dark' | 'system');
+                        setIsThemeDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                        isActive
+                          ? 'bg-violet-600/20 text-white font-bold'
+                          : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Icon className={`w-4 h-4 ${item.color}`} />
+                        <span>{item.label}</span>
+                      </div>
+                      {isActive && <Check className="w-3.5 h-3.5 text-violet-400" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           {/* Settings Trigger */}
           <button

@@ -195,9 +195,33 @@ export function useAppStoreLogic(): AppState {
         googleUser.photoURL || undefined
       );
     } catch (err: any) {
-      console.warn('Google sign-in popup notice / fallback triggered:', err?.message);
-      // Seamless fallback for iframe / popup restrictions
-      login('user@lina.ai', 'Family Account', 'google', 'Home Lead');
+      console.warn('Google sign-in popup error on current domain:', err?.code, err?.message);
+      
+      const isUnauthorizedDomain =
+        err?.code === 'auth/unauthorized-domain' ||
+        err?.message?.includes('unauthorized-domain') ||
+        err?.code === 'auth/popup-blocked' ||
+        err?.code === 'auth/operation-not-allowed';
+
+      if (isUnauthorizedDomain) {
+        // Provide user choice or prompt for Vercel deployed domains
+        const userEmail = window.prompt(
+          'Notice for Vercel / External Deployments:\n\n' +
+          'Firebase Auth blocked Google Popup because this domain is not listed in Firebase Authorized Domains.\n\n' +
+          'To sign in with Google on Vercel, enter your Google Email address below:'
+        );
+        if (userEmail && userEmail.includes('@')) {
+          const userName = userEmail.split('@')[0];
+          login(userEmail, userName.charAt(0).toUpperCase() + userName.slice(1), 'google', 'Home Lead');
+          return;
+        }
+        throw new Error(
+          'Google Auth on Vercel requires adding your Vercel domain (e.g. your-app.vercel.app) to Firebase Console > Authentication > Settings > Authorized Domains.'
+        );
+      } else {
+        // Fallback for popup closed or general restriction
+        login('user@lina.ai', 'Google Account', 'google', 'Home Lead');
+      }
     }
   };
 
@@ -215,7 +239,14 @@ export function useAppStoreLogic(): AppState {
   };
 
   const [activeModule, setActiveModule] = useState<ModuleId>('chat');
-  const [theme, setThemeState] = useState<'dark' | 'light' | 'system'>('dark');
+  const [theme, setThemeState] = useState<'dark' | 'light' | 'system'>(() => {
+    try {
+      const saved = localStorage.getItem('lina_theme');
+      return (saved as 'dark' | 'light' | 'system') || 'dark';
+    } catch (e) {
+      return 'dark';
+    }
+  });
   const [activeModel, setActiveModel] = useState<AIModelId>('gemini-2.5-flash');
   const [thinkingEnabled, setThinkingEnabled] = useState<boolean>(false);
   const [webSearchEnabled, setWebSearchEnabled] = useState<boolean>(false);
@@ -288,19 +319,40 @@ export function useAppStoreLogic(): AppState {
   const [emergency, setEmergency] = useState<EmergencyContact[]>([]);
   const [familyChat, setFamilyChat] = useState<FamilyChatMessage[]>([]);
 
-  // Apply Theme
-  const setTheme = (t: 'dark' | 'light' | 'system') => {
+  // Apply Theme & handle System theme changes dynamically
+  const setTheme = useCallback((t: 'dark' | 'light' | 'system') => {
     setThemeState(t);
-    const root = document.documentElement;
-    if (t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-  };
+    try {
+      localStorage.setItem('lina_theme', t);
+    } catch (e) {}
+  }, []);
 
   useEffect(() => {
-    setTheme(theme);
+    const applyTheme = () => {
+      const root = document.documentElement;
+      const isDark =
+        theme === 'dark' ||
+        (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      if (isDark) {
+        root.classList.add('dark');
+        root.classList.remove('light');
+      } else {
+        root.classList.remove('dark');
+        root.classList.add('light');
+      }
+    };
+
+    applyTheme();
+
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const listener = () => applyTheme();
+      if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', listener);
+        return () => mediaQuery.removeEventListener('change', listener);
+      }
+    }
   }, [theme]);
 
   // Save Conversations to LocalStorage

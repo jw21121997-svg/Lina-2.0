@@ -67,7 +67,7 @@ export const AuthScreen: React.FC = () => {
     try {
       await loginWithGoogle();
     } catch (err: any) {
-      setErrorMsg('Google Sign-In notice: Redirected seamlessly.');
+      setErrorMsg(err?.message || 'Google Sign-In notice: Authorization failed on current domain.');
     } finally {
       setIsSubmitting(false);
     }
