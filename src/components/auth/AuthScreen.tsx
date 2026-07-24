@@ -172,31 +172,9 @@ export const AuthScreen: React.FC = () => {
 
         {/* Error Message Alert */}
         {errorMsg && (
-          <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-medium flex flex-col gap-2 animate-in fade-in">
-            <div className="flex items-start gap-2">
-              <span className="shrink-0 mt-0.5 text-rose-400">⚠️</span>
-              <span className="leading-relaxed">{errorMsg}</span>
-            </div>
-            {errorMsg.includes('Domain Unauthorized') && (
-              <div className="mt-1 pt-2 border-t border-rose-500/20 text-[11px] text-slate-300 space-y-1.5">
-                <div className="font-bold text-amber-300">How to fix this in Firebase Console:</div>
-                <ol className="list-decimal list-inside text-slate-400 space-y-0.5">
-                  <li>Go to <a href="https://console.firebase.google.com" target="_blank" rel="noreferrer" className="text-cyan-400 underline font-semibold">Firebase Console</a></li>
-                  <li>Authentication &rarr; Settings &rarr; Authorized Domains</li>
-                  <li>Add domain: <code className="text-emerald-300 bg-slate-950 px-1 py-0.5 rounded">{typeof window !== 'undefined' ? window.location.hostname : 'lina-2-0.vercel.app'}</code></li>
-                </ol>
-                <div className="pt-1.5 flex items-center justify-between">
-                  <span className="text-[10px] text-slate-400">Or sign in below via Email / Demo:</span>
-                  <button
-                    type="button"
-                    onClick={() => login('jw21121997@gmail.com', 'JW', 'email', 'Home Admin')}
-                    className="px-2.5 py-1 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-[10px] font-bold transition-all shadow-sm"
-                  >
-                    Quick Sign In As Demo
-                  </button>
-                </div>
-              </div>
-            )}
+          <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-medium flex items-center gap-2 animate-in fade-in">
+            <span className="shrink-0 text-rose-400">⚠️</span>
+            <span className="leading-relaxed">{errorMsg}</span>
           </div>
         )}
 
